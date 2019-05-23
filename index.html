@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="./node_modules/@aspnet/signalr/dist/browser/signalr.js"></script>
+</head>
+<body>
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("http://localhost:5000/click")
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+        connection.on("SendClick", (text) => {
+            const container = document.querySelector('#container');
+            const newElement = document.createElement("li");
+            newElement.textContent = text + " clicked";
+            container.appendChild(newElement);
+        });
+        connection.start();
+    </script>
+    <!-- <script>
+        function askhistory() {
+            connection.send("AskHistory");
+        }
+    </script> -->
+    <script>
+        function clickButton(event) {
+            var id = event.srcElement.id;
+            var http = new XMLHttpRequest();
+            var url = 'http://localhost:5000/api/click';
+            http.open('POST', url, true);
+            http.setRequestHeader('Content-type', 'application/json');
+            http.send(JSON.stringify(id));
+        }
+    </script>
+    <!-- <button onclick="askhistory()">History</button> -->
+    <button id="one" onclick="clickButton(event)">Button1</button>
+    <button id="two" onclick="clickButton(event)">Button2</button>
+    <button id="tree" onclick="clickButton(event)">Button3</button>
+    <ul id="container">
+    </ul>
+</body>
+</html>
