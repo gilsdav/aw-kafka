@@ -21,29 +21,13 @@ namespace test.Kafka
         {
             this.historyMock = new List<string>();
             #region HistoryConsumer
-            var consumerConfig = new ConsumerConfig
-            { 
-                GroupId = "test-consumer-group",
-                BootstrapServers = "localhost:9092",
-                AutoOffsetReset = AutoOffsetResetType.Earliest
-            };
-            this.askHistoryConsumer = new Consumer<Ignore, string>(consumerConfig);
+            // TODO: create an instance of Consumer as "this.askHistoryConsumer"
             #endregion
             #region HistoryProducer
-            var producerConfig = new ProducerConfig { BootstrapServers = "localhost:9092", MessageTimeoutMs = 10000 };
-            this.sendHistoryProducer = new Producer<Null, string>(producerConfig);
+            // TODO: create an instance of Producer as "this.sendHistoryProducer"
             #endregion
             #region ClickConsumer
-            var consumerClickConfig = new ConsumerConfig
-            { 
-                // Reveive only by once if same groupe id : probably for clustering
-                // If you change this groupeId, you will receive Kafka history : usefull when add new modules
-                GroupId = "test-consumer-group-2", 
-                BootstrapServers = "localhost:9092",
-                AutoOffsetReset = AutoOffsetResetType.Earliest,
-                EnableAutoCommit = false
-            };
-            this.clickConsumer = new Consumer<Ignore, string>(consumerClickConfig);
+            // TODO: create an instance of Consumer as "this.clickConsumer"
             #endregion
         }
 
@@ -66,17 +50,15 @@ namespace test.Kafka
         private async Task listenAskHistory()
         {
             Console.WriteLine("Subscribe ask-history-topic");
-            this.askHistoryConsumer.Subscribe("ask-history-topic");
+            // TODO: Subscribe "ask-history-topic" using "this.askHistoryConsumer"
             this.runing = true;
             this.askHistoryConsumer.OnError += (_, e) => this.runing = !e.IsFatal;
             while (this.runing)
             {
                 try
                 {
-                    Console.WriteLine("Start Consume ask-history-topic");
-                    var cr = this.askHistoryConsumer.Consume();
-                    Console.WriteLine($"Consumed message '{cr.Value}' at: '{cr.TopicPartitionOffset}'.");
-                    var clientId = cr.Value;
+                    // TODO: consume the askHistoryConsumer and store result in "cr" and replace "bob" by the result
+                    var clientId = "bob";
                     var toSend = new List<string>(this.historyMock);
                     toSend.Insert(0, clientId);
                     await this.send(toSend.ToArray());
@@ -100,11 +82,8 @@ namespace test.Kafka
             {
                 try
                 {
-                    Console.WriteLine("Start Consume click for history");
-                    var cr = this.clickConsumer.Consume();
-                    Console.WriteLine($"Consumed click history message '{cr.Value}' at: '{cr.TopicPartitionOffset}'.");
-                    var clickValue = cr.Value;
-                    // TODO: save it to DB
+                    // TODO: consume the clickConsumer and store result in "cr" and replace "bob" by the result
+                    var clickValue = "bob";
                     this.historyMock.Add(clickValue);
                     Console.WriteLine($"Save new history {JsonConvert.SerializeObject(this.historyMock)}");
 
@@ -125,8 +104,7 @@ namespace test.Kafka
             try
             {
                 var jsonHistory = JsonConvert.SerializeObject(history);
-                var dr = await this.sendHistoryProducer.ProduceAsync("send-history-topic", new Message<Null, string> { Value=jsonHistory });
-                Console.WriteLine($"Delivered '{dr.Value.ToString()}' to '{dr.TopicPartitionOffset}'");
+                // TODO: Send history over "this.sendHistoryProducer" on topic 
                 return true;
             }
             catch (KafkaException e)
@@ -139,9 +117,8 @@ namespace test.Kafka
         private void stop()
         {
             this.runing = false;
-            this.askHistoryConsumer.Close();
-            this.clickConsumer.Close();
-            this.sendHistoryProducer.Flush(TimeSpan.FromMilliseconds(1000));
+            // TODO: close all consumers
+            // TODO: flush producer 
         }
     }
 }

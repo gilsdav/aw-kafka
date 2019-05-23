@@ -15,9 +15,8 @@ namespace test.Kafka
 
         public MyProducer()
         {
-            var config = new ProducerConfig { BootstrapServers = "localhost:9092", MessageTimeoutMs = 10000 };
-            this.producer = new Producer<Null, string>(config);
-            this.producerHistory = new Producer<Null, string>(config);
+            // TODO: create an instance of Producer as "this.producer"
+            // TODO: create an instance of Producer as "this.producerHistory"
         }
 
         public async Task<bool> send(string text)
@@ -25,8 +24,7 @@ namespace test.Kafka
             Console.WriteLine("test " + text);
             try
             {
-                var dr = await this.producer.ProduceAsync("click-topic", new Message<Null, string> { Value=text });
-                Console.WriteLine($"Delivered '{dr.Value}' to '{dr.TopicPartitionOffset}'");
+                // TODO: Send text over "this.producer" on topic
                 return true;
             }
             catch (KafkaException e)
@@ -41,8 +39,7 @@ namespace test.Kafka
             Console.WriteLine("askHistory for client " + clientID);
             try
             {
-                var dr = await this.producerHistory.ProduceAsync("ask-history-topic", new Message<Null, string> { Value=clientID });
-                Console.WriteLine($"Delivered ask-histor '{dr.Value}' to '{dr.TopicPartitionOffset}'");
+                // TODO: Send clientID over "this.producerHistory" on topic
                 return true;
             }
             catch (KafkaException e)

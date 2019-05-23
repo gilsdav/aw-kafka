@@ -22,20 +22,14 @@ namespace test.Kafka
         public MyConsumer(IHubContext<ClickHub, IClickClient> _clickClients)
         {
             this.clickClients = _clickClients;
-            var config = new ConsumerConfig
-            { 
-                GroupId = "test-consumer-group",
-                BootstrapServers = "localhost:9092",
-                AutoOffsetReset = AutoOffsetResetType.Earliest
-            };
-            this.consumer = new Consumer<Ignore, string>(config);
-            this.consumerHistory = new Consumer<Ignore, string>(config);
+            // TODO: create an instance of Consumer as "this.consumer"
+            // TODO: create an instance of Consumer as "this.consumerHistory"
         }
 
         private void listen()
         {
             Console.WriteLine("Subscribe click-topic");
-            this.consumer.Subscribe("click-topic");
+            // TODO: Subscribe "click-topic" using "this.consumer"
             this.runing = true;
             this.consumer.OnError += (_, e) => this.runing = !e.IsFatal;
              while (this.runing)
@@ -43,12 +37,8 @@ namespace test.Kafka
                 try
                 {
                     Console.WriteLine("Start Consume click-topic");
-                    
-                    // this.consumer.Seek(new TopicPartitionOffset(new TopicPartition("click-topic", new Partition()), Offset.Beginning));
-
-                    var cr = this.consumer.Consume();
-                    this.clickClients.Clients.All.SendClick(cr.Value);
-                    Console.WriteLine($"Consumed message '{cr.Value}' at: '{cr.TopicPartitionOffset}'.");
+                    // TODO: consume the consumer and store result in "cr" and replace "bob" by the result
+                    this.clickClients.Clients.All.SendClick("bob");
                 }
                 catch (ConsumeException e)
                 {
@@ -62,7 +52,7 @@ namespace test.Kafka
         private void listenhistory()
         {
             Console.WriteLine("Subscribe send-history-topic");
-            this.consumerHistory.Subscribe("send-history-topic");
+            // TODO: Subscribe "send-history-topic" using "this.consumerHistory"
             this.runing = true;
             this.consumerHistory.OnError += (_, e) => this.runing = !e.IsFatal;
              while (this.runing)
@@ -70,9 +60,8 @@ namespace test.Kafka
                 try
                 {
                     Console.WriteLine("Start Consume send-history-topic");
-                    var cr = this.consumerHistory.Consume();
-                    Console.WriteLine($"Consumed send-history message '{cr.Value}' at: '{cr.TopicPartitionOffset}'.");
-                    var response = JsonConvert.DeserializeObject<string[]>(cr.Value);
+                    // TODO: consume the consumerHistory and store result in "cr" and replace "['bob', 'bob']" by the result
+                    var response = JsonConvert.DeserializeObject<string[]>("['bob', 'bob']");
                     if (response.Length > 1) {
                         for (int i = 1; i < response.Length; i++)
                         {
@@ -92,14 +81,12 @@ namespace test.Kafka
         private void stop()
         {
             this.runing = false;
-            this.consumer.Close();
-            this.consumerHistory.Close();
+            // TODO: close all consumers
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             Console.WriteLine("execute listening");
-            // return Task.Run(() => this.listen());
             return Task.WhenAll(
                 Task.Run(() => this.listen()),
                 Task.Run(() => this.listenhistory())
