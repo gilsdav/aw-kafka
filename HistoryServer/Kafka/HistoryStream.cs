@@ -75,7 +75,7 @@ namespace test.Kafka
         private async Task listenClickHistory()
         {
             Console.WriteLine("Subscribe click for history");
-            this.clickConsumer.Subscribe("click-topic");
+            // TODO: Subscribe "click-topic" using "this.clickConsumer"
             this.runing = true;
             this.clickConsumer.OnError += (_, e) => this.runing = !e.IsFatal;
             while (this.runing)
